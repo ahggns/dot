@@ -1,0 +1,14 @@
+startup_message off
+hardstatus alwayslastline
+term screen-256color
+
+# ask for names for new screens
+bind c  eval screen title
+
+# sleek green thing
+caption string '%{kg}%?%F%{+b kW}%?[%{-b kg} %n %t %?%F%{+b kW}%?]%{+u kg} %= '
+hardstatus string '%{= kG}[ %{G}%H %{g}][%= %{= kw}%?%-Lw%?%{w}(%{W}%n %f%t%?(%u)%?%{w})%{w}%?%+Lw%?%?%= %{g}][%{W} %m-%d %{W}%c %{g}]'
+
+# Simple black on white
+# hardstatus alwayslastline "%{-b kw}%-w%{+b Wk}%50>%n %t%{-b kw}%+w%<"
+# caption always "%{= wk}%?%F%{+b Wk}-->%{= Wk} %?%t %=%d %M %0c %{+b p}%H%{-}"
