@@ -1,0 +1,104 @@
+#!/bin/bash
+# apply
+# given a list of files in the current directory
+#   1) create backup of that file in ~/
+#   2) create symlink to taht file from ~/
+
+DEBUG=
+QUIET=
+TEST=
+VERBOSE=
+INDENT=0
+
+usage() {
+  echo "usage: apply.sh <.f1>,<.f2>,..."
+  exit 0
+}
+
+# wrapper for echo
+put() {
+  if [[ -z $QUIET ]]; then
+    echo "$1"
+  fi
+}
+
+# forward message to put if debug flag set
+debug() {
+  if [[ -n $DEBUG ]]; then
+    put "$1"
+  fi
+}
+
+# wrapper for shell command
+cmd() {
+  if [[ -n $VERBOSE ]]; then
+    put "$1"
+  fi
+  if [[ -z $TEST ]]; then
+    $1
+  fi
+}
+
+dowork() {
+  debug "dowork"
+
+  # convert to array
+  LIST=(${files// / })
+
+  for dotidx in "${!LIST[@]}"
+  do
+    dot="${LIST[dotidx]}"
+    target="$HOME/$dot"
+
+    if [[ "$dot" == ".git" ]]; then
+      continue
+    fi
+    put "$dot"
+    if [ -e "$dot" ]; then 
+      if [ -e "$target" ]; then
+        SEARCH="ls -a $HOME | egrep \"^$dot.bak\" | wc -l"
+        debug "$SEARCH"
+        COUNT=$(ls -a $HOME | egrep "^$dot.bak" | wc -l)
+        let COUNT+=0
+        if [ $COUNT -le 0 ]; then
+          bak="$target.bak"
+        else
+          bak="$target.bak.$COUNT"
+        fi
+        put "  Backing up old file... $bak" 
+        cmd "mv $target $bak"
+      fi
+      put "  Linking to $dot"
+      cmd "ln -s `pwd`/$dot $target"
+    else
+      put "  $dot not found in "`pwd`"/"
+    fi
+  done
+}
+
+init() {
+  debug "$files"
+}
+
+debug "init"
+while getopts "hqtv" OPTION
+do
+  case $OPTION in
+    h)
+      usage
+      ;;
+    q)
+      QUIET=1
+      ;;
+    t)
+      TEST=1
+      ;;
+    v)
+      VERBOSE=1
+      ;;
+  esac
+done
+# get rest of arguments
+files=${@:$OPTIND}
+
+dowork
