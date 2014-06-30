@@ -1,7 +1,8 @@
 dot
 ===
-#### Dotfiles I like
+Dotfiles I like
 
-todo
-----
-script to create symlinks
+##Now featuring:
+---------------
+* .vimrc
+* .screenrc
