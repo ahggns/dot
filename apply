@@ -11,7 +11,17 @@ VERBOSE=
 INDENT=0
 
 usage() {
-  echo "usage: apply.sh <.f1>,<.f2>,..."
+  echo "usage: apply.sh [-hqtv] <.f1> <.f2> ..."
+  echo
+  echo "Apply the provided dotfiles for this user"
+  echo "  1) backup existing dot file in $HOME"
+  echo "  2) create link from $HOME to provided file"
+  echo
+  echo "options:"
+  echo "  -h this help text"
+  echo "  -q quiet mode (no output)"
+  echo "  -t test mode (commands not executed)"
+  echo "  -v verbose mode (print commands to be executed)"
   exit 0
 }
 
@@ -81,11 +91,18 @@ init() {
 }
 
 debug "init"
+
+if [ $# -lt 1 ]; then
+  usage
+  exit 1
+fi
+
 while getopts "hqtv" OPTION
 do
   case $OPTION in
     h)
       usage
+      exit 1
       ;;
     q)
       QUIET=1
